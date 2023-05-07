@@ -2,14 +2,14 @@ package com.qacart.todo.api.user.login;
 
 import com.qacart.todo.base.Specs;
 import com.qacart.todo.config.EndPoint;
-import com.qacart.todo.models.login.request.LoginRequest;
+import com.qacart.todo.models.login.requestBody.LoginRequestBody;
 import io.restassured.response.Response;
 
 import static io.restassured.RestAssured.given;
 
 public class LoginApi {
 
-    public static Response login(LoginRequest request){
+    public static Response login(LoginRequestBody request){
         Response response = given()
                 .spec(Specs.getRequestSpecification())
                 .body(request)

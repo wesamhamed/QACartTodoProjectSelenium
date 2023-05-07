@@ -2,12 +2,14 @@ package com.qacart.todo.testcases;
 
 import com.qacart.todo.base.BaseTest;
 import com.qacart.todo.data.ErrorMessages;
-import com.qacart.todo.models.register.request.RegisterRequest;
+import com.qacart.todo.models.register.requestBody.RegisterRequestBody;
+import com.qacart.todo.models.register.responseBody.RegisterResponseBody;
 import com.qacart.todo.pages.login.LoginPage;
 import com.qacart.todo.steps.UserSteps;
 import io.qameta.allure.Description;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
+import io.restassured.response.Response;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -21,13 +23,14 @@ public class LoginTest extends BaseTest {
     public void shouldBeAbleToLoginWithEmailAndPassword(){
 
         UserSteps userSteps = new UserSteps();
-        RegisterRequest registerRequest = userSteps.getRegisteredUser();
+        RegisterRequestBody registerRequestBody = userSteps.generateUser();
+       userSteps.register(registerRequestBody);
 
         LoginPage loginPage = new LoginPage(getDriver());
 
         boolean isWelcomeDisplayed  = loginPage
                 .load()
-                .login(registerRequest.getEmail(),registerRequest.getPassword())
+                .login(registerRequestBody.getEmail(),registerRequestBody.getPassword())
                 .isWelcomeDisplayed();
 
         Assert.assertTrue(isWelcomeDisplayed);
@@ -38,16 +41,16 @@ public class LoginTest extends BaseTest {
     public void ShouldNotBeAbleToLoginIfPasswordIsNotCorrect(){
 
         UserSteps userSteps = new UserSteps();
-        RegisterRequest registerRequest = userSteps.getRegisteredUser();
+        RegisterRequestBody registerRequestBody = userSteps.generateUser();
+       userSteps.register(registerRequestBody);
 
         LoginPage loginPage = new LoginPage(getDriver());
         boolean isErrorMessageDisplayed = loginPage
                                             .load()
-                                            .loginIfPasswordIsNotCorrect(registerRequest.getEmail(),"wrong password")
+                                            .loginIfPasswordIsNotCorrect(registerRequestBody.getEmail(),"wrong password")
                                             .isErrorMessageDisplayed();
 
         Assert.assertTrue(isErrorMessageDisplayed);
         Assert.assertEquals(loginPage.getErrorMessage(),ErrorMessages.EMAIL_AND_PASSWORD_NOT_CORRECT_LOGIN);
-
     }
 }

@@ -4,17 +4,20 @@ import com.github.javafaker.Faker;
 import com.qacart.todo.api.todo.addTodo.AddTodoApi;
 import com.qacart.todo.api.todo.deleteTodoById.DeleteTodoByIdApi;
 import com.qacart.todo.api.todo.getTodoById.GetTodoByIdApi;
-import com.qacart.todo.models.todo.addTodo.request.AddTodoRequest;
+import com.qacart.todo.models.todo.addTodo.requestBody.AddTodoRequestBody;
 import io.restassured.response.Response;
 
 public class TodoSteps {
-    public  AddTodoRequest generateTodo(){
+    public AddTodoRequestBody generateTodo(){
         Faker faker = new Faker();
         String item = faker.book().title();
         Boolean isCompleted = false;
-        return new AddTodoRequest(item,isCompleted);
+        return AddTodoRequestBody.builder()
+                                .item(item)
+                                .isCompleted(isCompleted)
+                                .build();
     }
-    public Response addTodo(AddTodoRequest addTodoRequest,String token){
+    public Response addTodo(AddTodoRequestBody addTodoRequest, String token){
      return  AddTodoApi.addTodo(addTodoRequest,token);
     }
     public Response getTodoByID(String token,String taskID){

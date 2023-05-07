@@ -2,13 +2,13 @@ package com.qacart.todo.api.todo.addTodo;
 
 import com.qacart.todo.base.Specs;
 import com.qacart.todo.config.EndPoint;
-import com.qacart.todo.models.todo.addTodo.request.AddTodoRequest;
+import com.qacart.todo.models.todo.addTodo.requestBody.AddTodoRequestBody;
 import io.restassured.response.Response;
 
 import static io.restassured.RestAssured.given;
 
 public class AddTodoApi {
-    public static Response addTodo(AddTodoRequest request, String token){
+    public static Response addTodo(AddTodoRequestBody request, String token){
         Response response =
                 given()
                         .spec(Specs.getRequestSpecification())

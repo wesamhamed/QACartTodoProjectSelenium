@@ -2,10 +2,12 @@ package com.qacart.todo.testcases.apis;
 
 import com.qacart.todo.data.ErrorMessages;
 import com.qacart.todo.models.error.Error;
-import com.qacart.todo.models.todo.addTodo.request.AddTodoRequest;
-import com.qacart.todo.models.todo.addTodo.response.AddTodoResponse;
-import com.qacart.todo.models.todo.deleteTodoById.response.DeleteTodoByIdResponse;
-import com.qacart.todo.models.todo.getTodoById.response.GetTodoResponse;
+import com.qacart.todo.models.register.requestBody.RegisterRequestBody;
+import com.qacart.todo.models.register.responseBody.RegisterResponseBody;
+import com.qacart.todo.models.todo.addTodo.requestBody.AddTodoRequestBody;
+import com.qacart.todo.models.todo.addTodo.responseBody.AddTodoResponseBody;
+import com.qacart.todo.models.todo.deleteTodoById.responseBody.DeleteTodoByIdResponseBody;
+import com.qacart.todo.models.todo.getTodoById.responseBody.GetTodoResponseBody;
 import com.qacart.todo.steps.TodoSteps;
 import com.qacart.todo.steps.UserSteps;
 import io.qameta.allure.Feature;
@@ -24,15 +26,18 @@ public class TodoApiTest {
     @Test(description = "should Be Able To Add Todo")
     public void shouldBeAbleToAddTodo(){
 
-        TodoSteps todoSteps = new TodoSteps();
-        AddTodoRequest addTodoRequest = todoSteps.generateTodo();
-
         UserSteps userSteps = new UserSteps();
-        userSteps.getRegisteredUser();
-        String token = userSteps.getToken();
+        RegisterRequestBody registerRequestBody = userSteps.generateUser();
+        Response registerResponse = userSteps.register(registerRequestBody);
+        RegisterResponseBody registerResponseBody = registerResponse.body().as(RegisterResponseBody.class);
+
+        String token = registerResponseBody.getAccess_token();
+
+        TodoSteps todoSteps = new TodoSteps();
+        AddTodoRequestBody addTodoRequest = todoSteps.generateTodo();
 
         Response response = todoSteps.addTodo(addTodoRequest,token);
-        AddTodoResponse returnedTodo = response.body().as(AddTodoResponse.class);
+        AddTodoResponseBody returnedTodo = response.body().as(AddTodoResponseBody.class);
 
         assertThat(response.statusCode(),equalTo(201));
         assertThat(returnedTodo.getItem(),is(equalTo(addTodoRequest.getItem())));
@@ -42,11 +47,16 @@ public class TodoApiTest {
     @Test(description = "should Not Be Able To Add Todo If Is Completed Missing")
     public void shouldNotBeAbleToAddTodoIfIsCompletedMissing(){
 
-        AddTodoRequest addTodoRequest = new AddTodoRequest("Learn Appium");
+        AddTodoRequestBody addTodoRequest = AddTodoRequestBody.builder()
+                                                .item("Learn Appium").build();
 
         UserSteps userSteps = new UserSteps();
-        userSteps.getRegisteredUser();
-        String token = userSteps.getToken();
+        RegisterRequestBody registerRequestBody = userSteps.generateUser();
+        Response registerResponse = userSteps.register(registerRequestBody);
+        RegisterResponseBody registerResponseBody = registerResponse
+                                                        .body().as(RegisterResponseBody.class);
+
+        String token = registerResponseBody.getAccess_token();
 
         TodoSteps todoSteps = new TodoSteps();
 
@@ -61,17 +71,20 @@ public class TodoApiTest {
     public void shouldBeAbleToGetATodoByID(){
 
         UserSteps userSteps = new UserSteps();
-        userSteps.getRegisteredUser();
-        String token = userSteps.getToken();
+        RegisterRequestBody registerRequestBody = userSteps.generateUser();
+        Response registerResponse = userSteps.register(registerRequestBody);
+        RegisterResponseBody registerResponseBody = registerResponse.body().as(RegisterResponseBody.class);
+
+        String token = registerResponseBody.getAccess_token();
 
         TodoSteps todoSteps = new TodoSteps();
-        AddTodoRequest addTodoRequest = todoSteps.generateTodo();
+        AddTodoRequestBody addTodoRequest = todoSteps.generateTodo();
 
         Response response = todoSteps.addTodo(addTodoRequest,token);
-        AddTodoResponse addTodoResponse = response.body().as(AddTodoResponse.class);
+        AddTodoResponseBody addTodoResponse = response.body().as(AddTodoResponseBody.class);
 
         Response getTodoResponse = todoSteps.getTodoByID(token,addTodoResponse.getId());
-        GetTodoResponse returnedTodo = getTodoResponse.body().as(GetTodoResponse.class);
+        GetTodoResponseBody returnedTodo = getTodoResponse.body().as(GetTodoResponseBody.class);
 
         assertThat(getTodoResponse.statusCode(),equalTo(200));
         assertThat(returnedTodo.getItem(),is(equalTo(addTodoResponse.getItem())));
@@ -82,16 +95,21 @@ public class TodoApiTest {
     public void shouldBeAbleToDeleteTodoByID(){
 
         UserSteps userSteps = new UserSteps();
-        userSteps.getRegisteredUser();
-        String token = userSteps.getToken();
+        RegisterRequestBody registerRequestBody = userSteps.generateUser();
+        Response registerResponse = userSteps.register(registerRequestBody);
+        RegisterResponseBody registerResponseBody = registerResponse.body().as(RegisterResponseBody.class);
+
+        String token = registerResponseBody.getAccess_token();
 
         TodoSteps todoSteps = new TodoSteps();
-        AddTodoRequest addTodoRequest = todoSteps.generateTodo();
-        AddTodoResponse addTodoResponse = todoSteps.addTodo(addTodoRequest,token).body().as(AddTodoResponse.class);
+        AddTodoRequestBody addTodoRequest = todoSteps.generateTodo();
+        AddTodoResponseBody addTodoResponse = todoSteps.addTodo(addTodoRequest,token)
+                                                        .body().as(AddTodoResponseBody.class);
 
         String todoID = addTodoResponse.getId();
         Response deleteTodoResponse = todoSteps.deleteTodoByID(token,todoID);
-        DeleteTodoByIdResponse deleteTodoByIdResponse = deleteTodoResponse.body().as(DeleteTodoByIdResponse.class);
+        DeleteTodoByIdResponseBody deleteTodoByIdResponse = deleteTodoResponse
+                                                                .body().as(DeleteTodoByIdResponseBody.class);
 
         assertThat(deleteTodoResponse.statusCode(),equalTo(200));
         assertThat(addTodoResponse.getItem(),is(equalTo(deleteTodoByIdResponse.getItem())));

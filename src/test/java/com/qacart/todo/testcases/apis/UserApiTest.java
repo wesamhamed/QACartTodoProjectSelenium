@@ -2,10 +2,10 @@ package com.qacart.todo.testcases.apis;
 
 import com.qacart.todo.data.ErrorMessages;
 import com.qacart.todo.models.error.Error;
-import com.qacart.todo.models.login.request.LoginRequest;
-import com.qacart.todo.models.login.response.LoginResponse;
-import com.qacart.todo.models.register.request.RegisterRequest;
-import com.qacart.todo.models.register.response.RegisterResponse;
+import com.qacart.todo.models.login.requestBody.LoginRequestBody;
+import com.qacart.todo.models.login.responseBody.LoginResponseBody;
+import com.qacart.todo.models.register.requestBody.RegisterRequestBody;
+import com.qacart.todo.models.register.responseBody.RegisterResponseBody;
 import com.qacart.todo.steps.UserSteps;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
@@ -24,10 +24,11 @@ public class UserApiTest {
     public void shouldBeAbleToRegister(){
 
         UserSteps userSteps = new UserSteps();
-        RegisterRequest registerRequest = userSteps.generateUser();
+        RegisterRequestBody registerRequest = userSteps.generateUser();
 
         Response response = userSteps.register(registerRequest);
-        RegisterResponse registerResponseBody = response.body().as(RegisterResponse.class);
+        RegisterResponseBody registerResponseBody = response.body()
+                                                                .as(RegisterResponseBody.class);
 
         assertThat(response.statusCode(),equalTo(201));
         assertThat(registerRequest.getFirstName(),equalTo(registerResponseBody.getFirstName()));
@@ -37,7 +38,7 @@ public class UserApiTest {
     public void shouldNotBeAbleToRegisterWithTheSameEmail(){
 
         UserSteps userSteps = new UserSteps();
-        RegisterRequest registerRequest = userSteps.generateUser();
+        RegisterRequestBody registerRequest = userSteps.generateUser();
          userSteps.register(registerRequest);
 
         Response response = userSteps.register(registerRequest);
@@ -51,13 +52,13 @@ public class UserApiTest {
     public void shouldBeAbleToLogin(){
 
         UserSteps userSteps = new UserSteps();
-        RegisterRequest registerRequest = userSteps.generateUser();
+        RegisterRequestBody registerRequest = userSteps.generateUser();
         userSteps.register(registerRequest);
 
-        LoginRequest loginRequest = new LoginRequest(registerRequest.getEmail(),registerRequest.getPassword());
+        LoginRequestBody loginRequest = new LoginRequestBody(registerRequest.getEmail(),registerRequest.getPassword());
         Response loginResponse = userSteps.login(loginRequest);
 
-        LoginResponse loginResponseBody = loginResponse.body().as(LoginResponse.class);
+        LoginResponseBody loginResponseBody = loginResponse.body().as(LoginResponseBody.class);
 
         assertThat(loginResponse.statusCode(),equalTo(200));
         assertThat(loginResponseBody.getFirstName(),equalTo(registerRequest.getFirstName()));
@@ -68,10 +69,11 @@ public class UserApiTest {
     public void ShouldNotBeAbleToLoginIfPasswordIsNotCorrect(){
 
         UserSteps userSteps = new UserSteps();
-        RegisterRequest registerRequest = userSteps.generateUser();
+        RegisterRequestBody registerRequest = userSteps.generateUser();
         userSteps.register(registerRequest);
 
-        LoginRequest loginRequest = new LoginRequest(registerRequest.getEmail(),"wrongPassword");
+        LoginRequestBody loginRequest =  LoginRequestBody.builder().email(registerRequest.getEmail())
+                                                                .password( "wrongPassword").build();
 
         Response loginResponse = userSteps.login(loginRequest);
         Error returnedError = loginResponse.body().as(Error.class);

@@ -3,10 +3,12 @@ package com.qacart.todo.steps;
 import com.github.javafaker.Faker;
 import com.qacart.todo.api.user.login.LoginApi;
 import com.qacart.todo.api.user.register.RegisterApi;
-import com.qacart.todo.models.login.request.LoginRequest;
-import com.qacart.todo.models.register.request.RegisterRequest;
+import com.qacart.todo.models.login.requestBody.LoginRequestBody;
+import com.qacart.todo.models.register.requestBody.RegisterRequestBody;
 import io.restassured.http.Cookie;
 import io.restassured.response.Response;
+import io.restassured.response.ResponseBody;
+
 import java.util.List;
 
 public class UserSteps {
@@ -31,16 +33,18 @@ public class UserSteps {
         return this.firstName;
     }
 
-    public RegisterRequest generateUser(){
+    public RegisterRequestBody generateUser(){
         Faker faker = new Faker();
         String firstName = faker.name().firstName();
         String lastName = faker.name().lastName();
         String email = faker.internet().emailAddress();
         String password = faker.internet().password();
-        return new RegisterRequest(firstName,lastName,email,password);
+        return RegisterRequestBody.builder()
+                                .firstName(firstName).lastName(lastName)
+                                .email(email).password(password).build();
     }
-    public RegisterRequest getRegisteredUser(){
-        RegisterRequest registerRequest = generateUser();
+    public RegisterRequestBody getRegisteredUser(){
+        RegisterRequestBody registerRequest = generateUser();
         Response response = RegisterApi.register(registerRequest);
         this.restAssuredCookies = response.detailedCookies().asList();
         this.accessToken = response.body().path("access_token");
@@ -48,10 +52,12 @@ public class UserSteps {
         this.firstName = response.body().path("firstName");
         return registerRequest;
     }
-    public Response register(RegisterRequest registerRequest){
+    public Response register(RegisterRequestBody registerRequest){
         return RegisterApi.register(registerRequest);
     }
-    public Response login(LoginRequest loginRequest){
+    public Response login(LoginRequestBody loginRequest){
         return LoginApi.login(loginRequest);
     }
+
+
 }

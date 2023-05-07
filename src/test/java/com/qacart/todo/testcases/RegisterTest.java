@@ -2,12 +2,13 @@ package com.qacart.todo.testcases;
 
 import com.qacart.todo.base.BaseTest;
 import com.qacart.todo.data.ErrorMessages;
-import com.qacart.todo.models.register.request.RegisterRequest;
+import com.qacart.todo.models.register.requestBody.RegisterRequestBody;
 import com.qacart.todo.pages.register.RegisterPage;
 import com.qacart.todo.steps.UserSteps;
 import io.qameta.allure.Description;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
+import io.restassured.response.Response;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -22,7 +23,7 @@ public class RegisterTest extends BaseTest {
         RegisterPage registerPage = new RegisterPage(getDriver());
 
         UserSteps userSteps = new UserSteps();
-        RegisterRequest registerRequest = userSteps.generateUser();
+        RegisterRequestBody registerRequest = userSteps.generateUser();
 
         boolean isWelcomeDisplayed = registerPage
                 .load()
@@ -40,12 +41,14 @@ public class RegisterTest extends BaseTest {
         RegisterPage registerPage = new RegisterPage(getDriver());
 
         UserSteps userSteps = new UserSteps();
-        RegisterRequest registerRequest = userSteps.getRegisteredUser();
+        RegisterRequestBody registerRequestBody = userSteps.generateUser();
+        Response registerResponse = userSteps.register(registerRequestBody);
+
 
         boolean isErrorMessageDisplayed = registerPage
                 .load()
-                .registerWithTheRegisteredEmail(registerRequest.getFirstName(),registerRequest.getLastName()
-                        , registerRequest.getEmail(), registerRequest.getPassword(),registerRequest.getPassword())
+                .registerWithTheRegisteredEmail(registerRequestBody.getFirstName(),registerRequestBody.getLastName()
+                        , registerRequestBody.getEmail(), registerRequestBody.getPassword(),registerRequestBody.getPassword())
                 .isErrorMessageDisplayed();
 
         Assert.assertTrue(isErrorMessageDisplayed);
