@@ -17,7 +17,7 @@ jobs:
                 cache: maven
                 distribution: "temurin"
             - uses: browser-actions/setup-chrome@latest
-            - run: mmvn compile
+            - run: mvn compile
 
     test_windows:
       runs-on: windows-latest
