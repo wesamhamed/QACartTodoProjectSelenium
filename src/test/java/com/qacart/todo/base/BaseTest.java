@@ -1,5 +1,6 @@
 package com.qacart.todo.base;
 
+
 import com.qacart.todo.factory.DriverFactory;
 import com.qacart.todo.utils.CookieUtils;
 import io.qameta.allure.Allure;
@@ -11,6 +12,7 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 
 import java.io.File;
@@ -22,7 +24,6 @@ import java.util.List;
 public class BaseTest {
 
     protected ThreadLocal<WebDriver> driver = new ThreadLocal<>();
-
     public void setDriver(WebDriver driver) {
         this.driver.set(driver);
     }
@@ -30,6 +31,15 @@ public class BaseTest {
         return this.driver.get();
     }
 
+
+//    @BeforeSuite
+//    public void beforeSuite(){
+//        SeedAPi.setupDatabase();
+//    }
+//    @AfterSuite
+//    public void afterSuite(){
+//        SeedAPi.setupDatabase();
+//    }
     @BeforeMethod
     public void setUp(){
         WebDriver driver = new DriverFactory().initializeDriver();
@@ -38,7 +48,7 @@ public class BaseTest {
     @AfterMethod
     public void tearDown(ITestResult result){
         String testcaseName = result.getMethod().getMethodName();
-        File destFile = new File(System.getProperty("user.dir")+File.separator+"screenshots"+File.separator+testcaseName+".png");
+        File destFile = new File(System.getProperty("user.dir") + File.separator + "screenshots"+ File.separator + testcaseName+ ".png");
         takeScreenshot(destFile);
         getDriver().quit();
     }
@@ -51,6 +61,7 @@ public class BaseTest {
         }
         driver.get().navigate().refresh();
     }
+
     public void takeScreenshot(File destFile){
         File file = ((TakesScreenshot) getDriver()).getScreenshotAs(OutputType.FILE);
         try {
@@ -62,6 +73,7 @@ public class BaseTest {
             e.printStackTrace();
         }
     }
+
 
 
 }

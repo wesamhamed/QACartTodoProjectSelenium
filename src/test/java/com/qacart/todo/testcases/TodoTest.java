@@ -1,9 +1,13 @@
 package com.qacart.todo.testcases;
 
-import com.qacart.todo.api.RegisterApi;
-import com.qacart.todo.api.TasksApi;
+import com.qacart.todo.api.todo.addTodo.AddTodoApi;
 import com.qacart.todo.base.BaseTest;
-import com.qacart.todo.pages.TodoPage;
+import com.qacart.todo.models.register.request.RegisterRequest;
+import com.qacart.todo.models.todo.addTodo.request.AddTodoRequest;
+import com.qacart.todo.pages.home.HomePage;
+import com.qacart.todo.pages.todo.TodoPage;
+import com.qacart.todo.steps.TodoSteps;
+import com.qacart.todo.steps.UserSteps;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
 import org.testng.Assert;
@@ -12,39 +16,51 @@ import org.testng.annotations.Test;
 
 @Feature("Todo Feature")
 public class TodoTest extends BaseTest {
-
     @Story("Add Todo")
     @Test(description = "Should be able to add a new todo correctly")
     public void shouldBeAbleToAddNewTodo(){
 
-        RegisterApi registerApi = new RegisterApi();
-        registerApi.register();
+        UserSteps userSteps = new UserSteps();
+        RegisterRequest registerRequest = userSteps.getRegisteredUser();
+
+        HomePage homePage = new HomePage(getDriver());
+        homePage.load();
+
+        injectCookiesToBrowser(userSteps.getCookies());
 
         TodoPage todoPage = new TodoPage(getDriver())
                             .load();
 
-        injectCookiesToBrowser(registerApi.getCookies());
-
-        String actualResult = todoPage
+        String todoText = "Learn Selenium";
+        String getTodoText = todoPage
                                     .clickOnPlusButton()
-                                    .addNewTask("Learn Selenium")
+                                    .addNewTask(todoText)
                                     .getTodoText();
 
-        Assert.assertEquals(actualResult,"Learn Selenium");
+        Assert.assertEquals(todoText,getTodoText);
     }
 
     @Story("Delete Todo")
     @Test(description = "Should be able to delete a todo correctly")
     public void shouldBeAbleToDeleteTodo(){
 
-        RegisterApi registerApi = new RegisterApi();
-        registerApi.register();
+        UserSteps userSteps = new UserSteps();
+         userSteps.getRegisteredUser();
 
-        TasksApi tasksApi = new TasksApi();
-        tasksApi.addTask(registerApi.getToken());
+        HomePage homePage = new HomePage(getDriver());
+        homePage.load();
 
-        TodoPage todoPage = new TodoPage(getDriver()).load();
-        injectCookiesToBrowser(registerApi.getCookies());
+        injectCookiesToBrowser(userSteps.getCookies());
+
+        String token = userSteps.getToken();
+
+        TodoSteps todoSteps = new TodoSteps();
+        AddTodoRequest addTodoRequest = todoSteps.generateTodo();
+
+        AddTodoApi.addTodo(addTodoRequest,token);
+
+        TodoPage todoPage = new TodoPage(getDriver())
+                                    .load();
 
         boolean isNoTodosMessageDisplayed  = todoPage
                                             .clickOnDeleteButton()
@@ -52,4 +68,5 @@ public class TodoTest extends BaseTest {
 
         Assert.assertTrue(isNoTodosMessageDisplayed);
     }
+
 }

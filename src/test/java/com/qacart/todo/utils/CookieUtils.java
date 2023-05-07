@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CookieUtils {
-
     public static List<org.openqa.selenium.Cookie> convertRestAssuredCookiesToSeleniumCookies(List<Cookie> restAssuredCookies){
         List<org.openqa.selenium.Cookie> seleniumCookies = new ArrayList<>();
         for (Cookie cookie : restAssuredCookies){
