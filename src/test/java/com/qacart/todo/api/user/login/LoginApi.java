@@ -9,17 +9,26 @@ import static io.restassured.RestAssured.given;
 
 public class LoginApi {
 
-    public static Response login(LoginRequestBody request){
-        Response response = given()
+    private static LoginApi loginApi;
+
+    private LoginApi() {
+
+    }
+
+    public static LoginApi getInstance() {
+        if (loginApi == null) {
+            loginApi = new LoginApi();
+        }
+        return loginApi;
+    }
+
+    public Response login(LoginRequestBody request) {
+        return given()
                 .spec(Specs.getRequestSpecification())
                 .body(request)
-                .log().all()
                 .when()
                 .post(EndPoint.API_LOGIN_ENDPOINT)
                 .then()
-                .log().all()
                 .extract().response();
-
-        return response;
     }
 }

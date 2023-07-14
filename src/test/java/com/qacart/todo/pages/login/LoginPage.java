@@ -2,50 +2,61 @@ package com.qacart.todo.pages.login;
 
 import com.qacart.todo.base.PageBase;
 import com.qacart.todo.config.EndPoint;
+import com.qacart.todo.models.register.requestBody.RegisterRequestBody;
 import com.qacart.todo.pages.todo.TodoPage;
 import io.qameta.allure.Step;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class LoginPage extends PageBase {
-    @FindBy(css = "[data-testid='email']")
-    private WebElement emailInput;
-    @FindBy(css = "[data-testid='password']")
-    private WebElement passwordInput;
-    @FindBy(css = " [data-testid='submit']")
-    private WebElement submitButton;
-    @FindBy(css = "[data-testid='error-alert'] div:last-child")
-    private WebElement errorMessage;
-    private WebDriver driver;
-    public LoginPage(WebDriver webDriver){
-        super(webDriver);
-        this.driver = webDriver;
+    private static LoginPage loginPage;
+
+    // Elements
+    private By emailInputLocator = By.cssSelector("[data-testid='email']");
+    private By passwordInputLocator = By.cssSelector("[data-testid='password']");
+    private By submitButtonLocator = By.cssSelector("[data-testid='submit']");
+    private By errorMessageLocator = By.cssSelector("[data-testid='error-alert'] div:last-child");
+
+    // Constructor
+    private LoginPage() {
+        super();
     }
-    @Step("Load the login page")
-    public LoginPage load(){
-        this.driver.get(EndPoint.LOGIN_PAGE_ENDPOINT);
-        wait.until(ExpectedConditions.urlToBe(EndPoint.LOGIN_PAGE_ENDPOINT));
+
+    public static LoginPage getInstance() {
+        if (loginPage == null) {
+            loginPage = new LoginPage();
+        }
+        return loginPage;
+    }
+    // Methods, steps
+
+    @Step("Visit the login page")
+    public LoginPage load(WebDriver driver) {
+        visit(driver,EndPoint.LOGIN_PAGE_ENDPOINT);
         return this;
     }
+
     @Step("Login with email and password")
-    public TodoPage login(String email, String password){
-        type(emailInput,email);
-        type(passwordInput,password);
-        click(submitButton);
-        return new TodoPage(this.driver);
+    public TodoPage login(WebDriver driver, RegisterRequestBody registerRequestBody) {
+        type(driver,emailInputLocator,registerRequestBody.getEmail());
+        type(driver,passwordInputLocator,registerRequestBody.getPassword());
+        click(driver,submitButtonLocator);
+        return TodoPage.getInstance();
     }
+
     @Step("Login with password is not correct")
-    public LoginPage loginIfPasswordIsNotCorrect(String email,String password){
-        this.login( email, password);
-        return this;
+    public LoginPage loginIfPasswordIsNotCorrect(WebDriver driver, RegisterRequestBody registerRequestBody) {
+        this.login(driver,registerRequestBody);
+        return LoginPage.getInstance();
     }
-    public boolean isErrorMessageDisplayed(){
-        wait.until(ExpectedConditions.visibilityOf(errorMessage));
-        return this.errorMessage.isDisplayed();
+
+    @Step("Check if the error message is displayed")
+    public boolean isErrorMessageDisplayed(WebDriver driver) {
+        return isDisplayed(driver,errorMessageLocator);
     }
-    public String getErrorMessage(){
-        return this.errorMessage.getText();
+
+    @Step("Get the text of the error message")
+    public String getErrorMessage(WebDriver driver) {
+        return getText(driver,errorMessageLocator);
     }
 }

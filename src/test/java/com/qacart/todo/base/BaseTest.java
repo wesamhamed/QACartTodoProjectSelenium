@@ -12,7 +12,6 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 
 import java.io.File;
@@ -24,22 +23,13 @@ import java.util.List;
 public class BaseTest {
 
     protected ThreadLocal<WebDriver> driver = new ThreadLocal<>();
-    public void setDriver(WebDriver driver) {
-        this.driver.set(driver);
+    public void setDriver(WebDriver webDriver) {
+        driver.set(webDriver);
     }
     public WebDriver getDriver() {
-        return this.driver.get();
+        return driver.get();
     }
 
-
-//    @BeforeSuite
-//    public void beforeSuite(){
-//        SeedAPi.setupDatabase();
-//    }
-//    @AfterSuite
-//    public void afterSuite(){
-//        SeedAPi.setupDatabase();
-//    }
     @BeforeMethod
     public void setUp(){
         WebDriver driver = new DriverFactory().initializeDriver();
@@ -49,7 +39,7 @@ public class BaseTest {
     public void tearDown(ITestResult result){
         String testcaseName = result.getMethod().getMethodName();
         File destFile = new File(System.getProperty("user.dir") + File.separator + "screenshots"+ File.separator + testcaseName+ ".png");
-        takeScreenshot(destFile);
+        takeScreenShot(destFile);
         getDriver().quit();
     }
 
@@ -62,18 +52,14 @@ public class BaseTest {
         driver.get().navigate().refresh();
     }
 
-    public void takeScreenshot(File destFile){
-        File file = ((TakesScreenshot) getDriver()).getScreenshotAs(OutputType.FILE);
+    public void takeScreenShot(File destFile) {
+        File file = ((TakesScreenshot) driver.get()).getScreenshotAs(OutputType.FILE);
         try {
-            FileUtils.copyFile(file,destFile);
-            InputStream inputStream = new FileInputStream(destFile);
-            Allure.addAttachment("screenshot",inputStream);
-
-        } catch (IOException e) {
-            e.printStackTrace();
+            FileUtils.copyFile(file, destFile);
+            InputStream is = new FileInputStream(destFile);
+            Allure.addAttachment("screenshot", is);
+        } catch(IOException e) {
+            throw new RuntimeException(e);
         }
     }
-
-
-
 }

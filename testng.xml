@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="All Test Suite">
-    <test verbose="2" parallel="methods" thread-count="6" name="/home/wesamhamed/Desktop/training/Todo_App/TodoApplicationProject">
+    <test verbose="2" parallel="methods" thread-count="4" name="/home/wesamhamed/Desktop/training/Todo_App/TodoApplicationProject">
         <classes>
-            <class name="com.qacart.todo.testcases.RegisterTest"/>
-            <class name="com.qacart.todo.testcases.LoginTest"/>
-            <class name="com.qacart.todo.testcases.TodoTest"/>
+            <class name="com.qacart.todo.testcases.GUIs.register.RegisterTest"/>
+            <class name="com.qacart.todo.testcases.GUIs.login.LoginTest"/>
+            <class name="com.qacart.todo.testcases.GUIs.todo.TodoTest"/>
         </classes>
     </test>
 </suite>

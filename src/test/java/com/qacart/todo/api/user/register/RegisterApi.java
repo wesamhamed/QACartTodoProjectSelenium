@@ -8,16 +8,28 @@ import io.restassured.response.Response;
 import static io.restassured.RestAssured.given;
 
 public class RegisterApi {
-    public static Response register(RegisterRequestBody request){
-        Response response = given()
+
+    private static RegisterApi registerApi;
+
+    private RegisterApi() {
+
+    }
+
+    public static RegisterApi getInstance() {
+        if (registerApi == null) {
+            registerApi = new RegisterApi();
+        }
+        return registerApi;
+    }
+
+    public Response register(RegisterRequestBody request) {
+        return given()
                 .spec(Specs.getRequestSpecification())
                 .body(request)
-                .log().all()
                 .when()
                 .post(EndPoint.API_REGISTER_ENDPOINT)
                 .then()
-                .log().all()
-                .extract().response();
-        return response;
+                .extract()
+                .response();
     }
 }

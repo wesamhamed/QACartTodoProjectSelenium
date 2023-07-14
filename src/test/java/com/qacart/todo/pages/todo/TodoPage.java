@@ -4,63 +4,59 @@ import com.qacart.todo.base.PageBase;
 import com.qacart.todo.config.EndPoint;
 import com.qacart.todo.pages.newTodo.NewTodoPage;
 import io.qameta.allure.Step;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
-public class TodoPage extends PageBase {
-    private WebDriver driver;
 
-    @FindBy(css = "[data-testid='welcome']")
-    private WebElement welcomeMessage;
+public class TodoPage extends PageBase{
+    private static TodoPage todoPage;
 
-    @FindBy(css = "[data-testid='add']")
-    private WebElement addButton;
+    // Elements
+    private By welcomeMessageLocator = By.cssSelector("[data-testid='welcome']");
+    private By addButtonLocator = By.cssSelector("[data-testid='add']");
+    private By todoItemLocator = By.cssSelector("[data-testid='todo-item']");
+    private By deleteButtonLocator = By.cssSelector("[data-testid='delete']");
+    private By noTodosMessageLocator = By.cssSelector("[data-testid='no-todos']");
 
-    @FindBy(css ="[data-testid='todo-item']")
-    private WebElement todoItem;
-
-    @FindBy(css ="[data-testid='delete']")
-    private WebElement deleteButton;
-
-    @FindBy(css ="[data-testid='no-todos']")
-    private WebElement noTodosMessage;
-
-    public TodoPage(WebDriver webDriver){
-        super(webDriver);
-        this.driver = webDriver;
+    public static TodoPage getInstance() {
+        if (todoPage == null) {
+            todoPage = new TodoPage();
+        }
+        return todoPage;
     }
 
-    @Step("Load Todo page")
-    public TodoPage load(){
-        driver.get(EndPoint.TODO_PAGE_ENDPOINT);
-        wait.until(ExpectedConditions.urlToBe(EndPoint.TODO_PAGE_ENDPOINT));
+    @Step("Visiting Todo page")
+    public TodoPage load(WebDriver driver) {
+        visit(driver,EndPoint.TODO_PAGE_ENDPOINT);
         return this;
     }
-    public boolean isWelcomeDisplayed(){
-        wait.until(ExpectedConditions.urlToBe(EndPoint.TODO_PAGE_ENDPOINT));
-        return this.welcomeMessage.isDisplayed();
+
+    // Methods, Steps
+    @Step("Check if the welcome message is displayed")
+    public boolean isWelcomeDisplayed(WebDriver driver) {
+        return isDisplayed(driver,welcomeMessageLocator);
     }
 
-    @Step("Click on plus button")
-    public NewTodoPage clickOnPlusButton(){
-        click(this.addButton);
-        wait.until(ExpectedConditions.urlToBe(EndPoint.NEW_TODO_ENDPOINT));
-        return new NewTodoPage(this.driver);
+    @Step("Click on the plus button")
+    public NewTodoPage clickOnPlusButton(WebDriver driver) {
+        click(driver,addButtonLocator);
+        return NewTodoPage.getInstance();
     }
-    @Step("Click on delete button")
-    public TodoPage clickOnDeleteButton(){
-        click(this.deleteButton);
-        return this;
+
+    @Step("Click on the delete icon")
+    public TodoPage clickOnDeleteButton(WebDriver driver) {
+        click(driver,deleteButtonLocator);
+        return TodoPage.getInstance();
     }
-    public String getTodoText(){
-        wait.until(ExpectedConditions.visibilityOf(todoItem));
-        return this.todoItem.getText();
+
+    @Step("Get the text of the todo")
+    public String getTodoText(WebDriver driver) {
+        return getText(driver,todoItemLocator);
     }
-    public boolean isNoTodosMessageDisplayed(){
-        wait.until(ExpectedConditions.visibilityOf(noTodosMessage));
-        return this.noTodosMessage.isDisplayed();
+
+    @Step("Check if no todos message is displayed")
+    public boolean isNoTodosMessageDisplayed(WebDriver driver) {
+        return isDisplayed(driver,noTodosMessageLocator);
     }
 
 }

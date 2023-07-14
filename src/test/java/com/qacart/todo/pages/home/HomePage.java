@@ -1,19 +1,32 @@
 package com.qacart.todo.pages.home;
 
+
 import com.qacart.todo.base.PageBase;
-import com.qacart.todo.config.EndPoint;
+import com.qacart.todo.utils.ConfigUtils;
+import io.qameta.allure.Step;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class HomePage extends PageBase {
-    private WebDriver driver;
-    public HomePage(WebDriver driver){
-        super(driver);
-        this.driver = driver;
+    private static HomePage homePage;
+
+    // Elements
+
+
+    // Constructor
+    private HomePage() {
+        super();
     }
-    public HomePage load(){
-        driver.get(EndPoint.HOME_PAGE_ENDPOINT);
-        wait.until(ExpectedConditions.urlToBe(EndPoint.HOME_PAGE_ENDPOINT+"/"));
+
+    public static HomePage getInstance() {
+        if (homePage == null) {
+            homePage = new HomePage();
+        }
+        return homePage;
+    }
+
+    @Step("Visiting the home page")
+    public HomePage load(WebDriver driver) {
+        visit(driver,ConfigUtils.getInstance().getBaseUrl());
         return this;
     }
 }

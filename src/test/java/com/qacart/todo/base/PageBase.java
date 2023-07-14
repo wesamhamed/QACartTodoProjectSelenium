@@ -1,27 +1,25 @@
 package com.qacart.todo.base;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.time.Duration;
 
 public class PageBase {
-    protected WebDriver driver;
-    protected WebDriverWait wait;
-    public PageBase(WebDriver driver){
-        this.driver = driver;
-        PageFactory.initElements(driver,this);
-        this.wait = new WebDriverWait(driver,Duration.ofSeconds(10));
+    public PageBase(){
     }
-    protected void type(WebElement element, String text){
-        element.sendKeys(text);
+    protected void type(WebDriver driver, By elementLocator, String text){
+        driver.findElement(elementLocator).clear();
+        driver.findElement(elementLocator).sendKeys(text);
     }
-    protected void click(WebElement element){
-        element.click();
+    protected void click(WebDriver driver,By elementLocator){
+        driver.findElement(elementLocator).click();
     }
-    protected void clear(WebElement element){
-        element.clear();
+    protected String getText(WebDriver driver,By elementLocator){
+        return driver.findElement(elementLocator).getText();
+    }
+    protected boolean isDisplayed(WebDriver driver,By elementLocator){
+        return driver.findElement(elementLocator).isDisplayed();
+    }
+    protected void visit(WebDriver driver,String url){
+        driver.get(url);
     }
 }
