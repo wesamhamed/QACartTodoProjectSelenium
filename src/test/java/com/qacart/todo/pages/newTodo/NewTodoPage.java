@@ -35,7 +35,7 @@ public class NewTodoPage extends PageBase {
     // Methods, Steps
     @Step("Add new task")
     public TodoPage addNewTask(WebDriver driver, String item) {
-        type(driver,newTaskSubmitLocator,item);
+        type(driver,newTodoInputLocator,item);
         click(driver,newTaskSubmitLocator);
         return TodoPage.getInstance();
     }
