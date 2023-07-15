@@ -15,7 +15,7 @@ jobs:
       - name: Setup Chrome
         uses: browser-actions/setup-chrome@latest
       - name: Run Test
-        run: mvn clean test
+        run: mvn clean test "-Dheadless=true"
       - name: Get Allure history
         uses: actions/checkout@v2
         continue-on-error: true
