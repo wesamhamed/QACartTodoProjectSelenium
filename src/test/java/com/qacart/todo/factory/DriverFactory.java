@@ -13,11 +13,14 @@ public class DriverFactory {
     public WebDriver initializeDriver() {
         WebDriver driver;
         String browser = System.getProperty("browser", "CHROME");
+        String headless  = System.getProperty("headless","false");
         switch (browser) {
             case "CHROME" -> {
                 ChromeOptions options = new ChromeOptions();
                 options.addArguments("--remote-allow-origins=*");
-                options.addArguments("--headless");
+                if (headless.equals("true")){
+                    options.addArguments("--headless");
+                }
                 driver = new ChromeDriver(options);
             }
             case "FIREFOX" -> {

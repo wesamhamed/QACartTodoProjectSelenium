@@ -24,8 +24,7 @@ public class RegisterTest extends BaseTest {
 
         boolean isWelcomeDisplayed = RegisterPage.getInstance()
                 .load(getDriver())
-                .register(getDriver(),registerRequest.getFirstName(),registerRequest.getLastName(),registerRequest.getEmail()
-                        ,registerRequest.getPassword(),registerRequest.getPassword())
+                .register(getDriver(),registerRequest)
                 .isWelcomeDisplayed(getDriver());
 
         Assert.assertTrue(isWelcomeDisplayed);
@@ -44,8 +43,7 @@ public class RegisterTest extends BaseTest {
         boolean isErrorMessageDisplayed = RegisterPage
                 .getInstance()
                 .load(getDriver())
-                .registerWithTheRegisteredEmail(getDriver(),registerRequestBody.getFirstName(),registerRequestBody.getLastName()
-                        , registerRequestBody.getEmail(), registerRequestBody.getPassword(),registerRequestBody.getPassword())
+                .registerWithTheRegisteredEmail(getDriver(),registerRequestBody)
                 .isErrorMessageDisplayed(getDriver());
 
         Assert.assertTrue(isErrorMessageDisplayed);

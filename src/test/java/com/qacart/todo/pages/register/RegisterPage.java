@@ -2,6 +2,7 @@ package com.qacart.todo.pages.register;
 
 import com.qacart.todo.base.PageBase;
 import com.qacart.todo.config.EndPoint;
+import com.qacart.todo.models.register.requestBody.RegisterRequestBody;
 import com.qacart.todo.pages.todo.TodoPage;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
@@ -19,8 +20,8 @@ public class RegisterPage extends PageBase {
     private By confirmPasswordInputLocator = By.cssSelector("[data-testid='confirm-password']");
     private By submitButtonLocator = By.cssSelector("[data-testid='submit']");
     private By errorMessageLocator = By.cssSelector("[data-testid='error'] div:last-child");
-    // Constructor
 
+    // Constructor
     private RegisterPage() {
         super();
     }
@@ -40,19 +41,19 @@ public class RegisterPage extends PageBase {
     }
 
     @Step("Login with first name, last name,password,and confirm password")
-    public TodoPage register(WebDriver driver, String firstName, String lastName, String email, String password, String confirmPassword) {
-        type(driver,firstNameInputLocator,firstName);
-        type(driver,lastNameInputLocator,lastName);
-        type(driver,emailInputLocator,email);
-        type(driver,passwordInputLocator,password);
-        type(driver,confirmPasswordInputLocator,confirmPassword);
+    public TodoPage register(WebDriver driver, RegisterRequestBody registerRequestBody) {
+        type(driver,firstNameInputLocator,registerRequestBody.getFirstName());
+        type(driver,lastNameInputLocator,registerRequestBody.getLastName());
+        type(driver,emailInputLocator,registerRequestBody.getEmail());
+        type(driver,passwordInputLocator,registerRequestBody.getPassword());
+        type(driver,confirmPasswordInputLocator,registerRequestBody.getPassword());
         click(driver,submitButtonLocator);
         return TodoPage.getInstance();
     }
 
     @Step("Login with the registered email")
-    public RegisterPage registerWithTheRegisteredEmail(WebDriver driver, String firstName, String lastName, String email, String password, String confirmPassword) {
-        this.register(driver, firstName, lastName, email, password, confirmPassword);
+    public RegisterPage registerWithTheRegisteredEmail(WebDriver driver, RegisterRequestBody registerRequestBody) {
+        this.register(driver,registerRequestBody);
         return RegisterPage.getInstance();
     }
 

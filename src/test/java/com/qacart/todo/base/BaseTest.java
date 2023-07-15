@@ -22,7 +22,7 @@ import java.util.List;
 
 public class BaseTest {
 
-    protected ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+    private ThreadLocal<WebDriver> driver = new ThreadLocal<>();
     public void setDriver(WebDriver webDriver) {
         driver.set(webDriver);
     }
@@ -47,9 +47,9 @@ public class BaseTest {
     public void injectCookiesToBrowser(List<Cookie> restAssuredCookies){
         List<org.openqa.selenium.Cookie> seleniumCookies = CookieUtils.convertRestAssuredCookiesToSeleniumCookies(restAssuredCookies);
         for(org.openqa.selenium.Cookie cookie : seleniumCookies){
-            driver.get().manage().addCookie(cookie);
+            getDriver().manage().addCookie(cookie);
         }
-        driver.get().navigate().refresh();
+        getDriver().navigate().refresh();
     }
 
     public void takeScreenShot(File destFile) {

@@ -6,6 +6,7 @@ import org.openqa.selenium.WebDriver;
 public class PageBase {
     public PageBase(){
     }
+
     protected void type(WebDriver driver, By elementLocator, String text){
         driver.findElement(elementLocator).clear();
         driver.findElement(elementLocator).sendKeys(text);
