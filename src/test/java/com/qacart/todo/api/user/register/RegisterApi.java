@@ -1,35 +1,42 @@
 package com.qacart.todo.api.user.register;
 
-import com.qacart.todo.base.Specs;
-import com.qacart.todo.config.EndPoint;
-import com.qacart.todo.models.register.requestBody.RegisterRequestBody;
-import io.restassured.response.Response;
-
-import static io.restassured.RestAssured.given;
 
 public class RegisterApi {
 
     private static RegisterApi registerApi;
 
+    private RegisterApiGetController get;
+    private RegisterApiActController act;
+    private RegisterApiVerifyController verify;
+
+
+    public RegisterApiActController act() {
+        return act;
+    }
+
+    public RegisterApiVerifyController verify() {
+        return verify;
+    }
+
+    public RegisterApiGetController get() {
+        return get;
+    }
+
     private RegisterApi() {
 
     }
 
-    public static RegisterApi getInstance() {
+    private RegisterApi(RegisterApiGetController get, RegisterApiActController act, RegisterApiVerifyController verify) {
+        this.get = get;
+        this.act = act;
+        this.verify = verify;
+    }
+
+    public static RegisterApi getRegisterApi() {
         if (registerApi == null) {
-            registerApi = new RegisterApi();
+            registerApi = new RegisterApi(RegisterApiGetController.getRegisterApiGetController(), RegisterApiActController.getRegisterApiActController(), RegisterApiVerifyController.getRegisterApiVerifyController());
         }
         return registerApi;
     }
 
-    public Response register(RegisterRequestBody request) {
-        return given()
-                .spec(Specs.getRequestSpecification())
-                .body(request)
-                .when()
-                .post(EndPoint.API_REGISTER_ENDPOINT)
-                .then()
-                .extract()
-                .response();
-    }
 }

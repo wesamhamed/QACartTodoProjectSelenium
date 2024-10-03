@@ -1,42 +1,41 @@
 package com.qacart.todo.pages.newTodo;
 
-import com.qacart.todo.base.PageBase;
-import com.qacart.todo.config.EndPoint;
-import com.qacart.todo.pages.todo.TodoPage;
-import io.qameta.allure.Step;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 
-public class NewTodoPage extends PageBase {
+public class NewTodoPage {
+
     private static NewTodoPage newTodoPage;
 
-    // Elements
-    private By newTodoInputLocator = By.cssSelector("[data-testid='new-todo']");
-    private By newTaskSubmitLocator = By.cssSelector("[data-testid='submit-newTask']");
+    private NewTodoPageGetController get;
+    private NewTodoPageActController act;
+    private NewTodoPageVerifyController verify;
+
+    public NewTodoPageActController act() {
+        return act;
+    }
+
+    public NewTodoPageVerifyController verify() {
+        return verify;
+    }
+
+    public NewTodoPageGetController get() {
+        return get;
+    }
 
     // Constructor
     private NewTodoPage() {
-        super();
     }
 
-    public static NewTodoPage getInstance() {
+    private NewTodoPage(NewTodoPageGetController get, NewTodoPageActController act, NewTodoPageVerifyController verify) {
+        this.get = get;
+        this.act = act;
+        this.verify = verify;
+    }
+
+    public static NewTodoPage getNewTodoPage() {
         if (newTodoPage == null) {
-            newTodoPage = new NewTodoPage();
+            newTodoPage = new NewTodoPage(NewTodoPageGetController.getNewTodoPageGetController(), NewTodoPageActController.getNewTodoPageActController(), NewTodoPageVerifyController.getNewTodoPageVerifyController());
         }
         return newTodoPage;
     }
 
-    @Step("Visiting  new todo page")
-    public NewTodoPage load(WebDriver driver) {
-        visit(driver,EndPoint.NEW_TODO_ENDPOINT);
-        return this;
-    }
-
-    // Methods, Steps
-    @Step("Add new task")
-    public TodoPage addNewTask(WebDriver driver, String item) {
-        type(driver,newTodoInputLocator,item);
-        click(driver,newTaskSubmitLocator);
-        return TodoPage.getInstance();
-    }
 }

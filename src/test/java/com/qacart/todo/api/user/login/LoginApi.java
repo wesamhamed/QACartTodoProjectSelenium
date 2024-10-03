@@ -1,34 +1,41 @@
 package com.qacart.todo.api.user.login;
 
-import com.qacart.todo.base.Specs;
-import com.qacart.todo.config.EndPoint;
-import com.qacart.todo.models.login.requestBody.LoginRequestBody;
-import io.restassured.response.Response;
-
-import static io.restassured.RestAssured.given;
 
 public class LoginApi {
 
     private static LoginApi loginApi;
 
+    private LoginApiGetController get;
+    private LoginApiActController act;
+    private LoginApiVerifyController verify;
+
+    public LoginApiActController act() {
+        return act;
+    }
+
+    public LoginApiVerifyController verify() {
+        return verify;
+    }
+
+    public LoginApiGetController get() {
+        return get;
+    }
+
     private LoginApi() {
 
     }
 
-    public static LoginApi getInstance() {
+    private LoginApi(LoginApiGetController get, LoginApiActController act, LoginApiVerifyController verify) {
+        this.get = get;
+        this.act = act;
+        this.verify = verify;
+    }
+
+    public static LoginApi getLoginApi() {
         if (loginApi == null) {
-            loginApi = new LoginApi();
+            loginApi = new LoginApi(LoginApiGetController.getLoginApiGetController(), LoginApiActController.getLoginApiActController(), LoginApiVerifyController.getLoginApiVerifyController());
         }
         return loginApi;
     }
 
-    public Response login(LoginRequestBody request) {
-        return given()
-                .spec(Specs.getRequestSpecification())
-                .body(request)
-                .when()
-                .post(EndPoint.API_LOGIN_ENDPOINT)
-                .then()
-                .extract().response();
-    }
 }

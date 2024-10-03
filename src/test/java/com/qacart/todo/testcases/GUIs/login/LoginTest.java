@@ -1,39 +1,42 @@
 package com.qacart.todo.testcases.GUIs.login;
 
+import com.qacart.todo.api.user.register.RegisterApi;
 import com.qacart.todo.base.BaseTest;
-import com.qacart.todo.data.ErrorMessages;
 import com.qacart.todo.models.register.requestBody.RegisterRequestBody;
 import com.qacart.todo.pages.login.LoginPage;
-import com.qacart.todo.steps.user.UserSteps;
+import com.qacart.todo.pages.todo.TodoPage;
 import io.qameta.allure.Description;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 
 @Feature("Auth Feature")
 public class LoginTest extends BaseTest {
+
+    RegisterApi registerApi = RegisterApi.getRegisterApi();
+    LoginPage loginPage = LoginPage.getLoginPage();
+    TodoPage todoPage = TodoPage.getTodoPage();
+
     @Story("Login with Email and Password")
     @Description("It will login by filling the email and the password and navigate to the todo page")
     @Test(description = "Should be able to login with email and password")
     public void shouldBeAbleToLoginWithEmailAndPassword() {
 
-        UserSteps userSteps = new UserSteps();
-        RegisterRequestBody registerRequestBody = userSteps.generateUser();
-        userSteps.register(registerRequestBody);
+        RegisterRequestBody registerRequestBody = registerApi.get()
+                .generateUser();
 
-        LoginPage
-                .getInstance()
-                .load(getDriver());
+        registerApi.act()
+                .register(registerRequestBody);
 
-        boolean isWelcomeDisplayed = LoginPage
-                .getInstance()
+
+        loginPage.act()
                 .load(getDriver())
-                .login(getDriver(), registerRequestBody)
-                .isWelcomeDisplayed(getDriver());
+                .login(getDriver(), registerRequestBody);
 
-        Assert.assertTrue(isWelcomeDisplayed);
+        todoPage.verify()
+                .welcomeIsDisplayed(getDriver());
+
     }
 
     @Story("Login with incorrect Password")
@@ -41,19 +44,21 @@ public class LoginTest extends BaseTest {
     @Test(description = "Should Not Be Able To Login If Password Is Not Correct")
     public void ShouldNotBeAbleToLoginIfPasswordIsNotCorrect() {
 
-        UserSteps userSteps = new UserSteps();
-        RegisterRequestBody registerRequestBody = userSteps.generateUser();
-        userSteps.register(registerRequestBody);
+        RegisterRequestBody registerRequestBody = registerApi.get()
+                .generateUser();
+
+        registerApi.act()
+                .register(registerRequestBody);
 
         registerRequestBody.setPassword("wrong password");
 
-        boolean isErrorMessageDisplayed = LoginPage
-                .getInstance()
+        loginPage.act()
                 .load(getDriver())
-                .loginIfPasswordIsNotCorrect(getDriver(), registerRequestBody)
-                .isErrorMessageDisplayed(getDriver());
+                .loginIfPasswordIsNotCorrect(getDriver(), registerRequestBody);
 
-        Assert.assertTrue(isErrorMessageDisplayed);
-        Assert.assertEquals(LoginPage.getInstance().getErrorMessage(getDriver()), ErrorMessages.EMAIL_AND_PASSWORD_NOT_CORRECT_LOGIN);
+        loginPage.verify()
+                .errorMessageIsDisplayed(getDriver())
+                .emailAndPasswordNotCorrectLogin(getDriver());
+
     }
 }

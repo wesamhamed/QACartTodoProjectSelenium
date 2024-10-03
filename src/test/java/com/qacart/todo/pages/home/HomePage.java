@@ -1,32 +1,41 @@
 package com.qacart.todo.pages.home;
 
 
-import com.qacart.todo.base.PageBase;
-import com.qacart.todo.utils.ConfigUtils;
-import io.qameta.allure.Step;
-import org.openqa.selenium.WebDriver;
+public class HomePage {
 
-public class HomePage extends PageBase {
     private static HomePage homePage;
 
-    // Elements
+    private HomePageGetController get;
+    private HomePageActController act;
+    private HomePageVerifyController verify;
 
-
-    // Constructor
-    private HomePage() {
-        super();
+    public HomePageActController act() {
+        return act;
     }
 
-    public static HomePage getInstance() {
+    public HomePageVerifyController verify() {
+        return verify;
+    }
+
+    public HomePageGetController get() {
+        return get;
+    }
+
+
+    private HomePage() {
+    }
+
+    private HomePage(HomePageGetController get, HomePageActController act, HomePageVerifyController verify) {
+        this.get = get;
+        this.act = act;
+        this.verify = verify;
+    }
+
+    public static HomePage getHomePage() {
         if (homePage == null) {
-            homePage = new HomePage();
+            homePage = new HomePage(HomePageGetController.getHomePageGetController(), HomePageActController.getHomePageActController(), HomePageVerifyController.getHomePageVerifyController());
         }
         return homePage;
     }
 
-    @Step("Visiting the home page")
-    public HomePage load(WebDriver driver) {
-        visit(driver,ConfigUtils.getInstance().getBaseUrl());
-        return this;
-    }
 }

@@ -23,30 +23,33 @@ import java.util.List;
 public class BaseTest {
 
     private ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+
     public void setDriver(WebDriver webDriver) {
         driver.set(webDriver);
     }
+
     public WebDriver getDriver() {
         return driver.get();
     }
 
-    @BeforeMethod
-    public void setUp(){
+    @BeforeMethod(alwaysRun = true)
+    public void setUp() {
         WebDriver driver = new DriverFactory().initializeDriver();
         setDriver(driver);
     }
-    @AfterMethod
-    public void tearDown(ITestResult result){
+
+    @AfterMethod(alwaysRun = true)
+    public void tearDown(ITestResult result) {
         String testcaseName = result.getMethod().getMethodName();
-        File destFile = new File(System.getProperty("user.dir") + File.separator + "screenshots"+ File.separator + testcaseName+ ".png");
+        File destFile = new File(System.getProperty("user.dir") + File.separator + "screenshots" + File.separator + testcaseName + ".png");
         takeScreenShot(destFile);
         getDriver().quit();
     }
 
     @Step
-    public void injectCookiesToBrowser(List<Cookie> restAssuredCookies){
+    public void injectCookiesToBrowser(List<Cookie> restAssuredCookies) {
         List<org.openqa.selenium.Cookie> seleniumCookies = CookieUtils.convertRestAssuredCookiesToSeleniumCookies(restAssuredCookies);
-        for(org.openqa.selenium.Cookie cookie : seleniumCookies){
+        for (org.openqa.selenium.Cookie cookie : seleniumCookies) {
             getDriver().manage().addCookie(cookie);
         }
         getDriver().navigate().refresh();
@@ -58,7 +61,7 @@ public class BaseTest {
             FileUtils.copyFile(file, destFile);
             InputStream is = new FileInputStream(destFile);
             Allure.addAttachment("screenshot", is);
-        } catch(IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

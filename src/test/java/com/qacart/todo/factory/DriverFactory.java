@@ -5,20 +5,23 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.safari.SafariDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
 public class DriverFactory {
 
+    private static WebDriverWait wait;
+
     public WebDriver initializeDriver() {
         WebDriver driver;
         String browser = System.getProperty("browser", "CHROME");
-        String headless  = System.getProperty("headless","false");
+        String headless = System.getProperty("headless", "false");
         switch (browser) {
             case "CHROME" -> {
                 ChromeOptions options = new ChromeOptions();
                 options.addArguments("--remote-allow-origins=*");
-                if (headless.equals("true")){
+                if (headless.equals("true")) {
                     options.addArguments("--headless");
                 }
                 driver = new ChromeDriver(options);
@@ -35,8 +38,15 @@ public class DriverFactory {
             }
         }
 
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.manage().window().maximize();
         return driver;
+    }
+
+    public static WebDriverWait getWebDriverWait(WebDriver driver) {
+        if (wait == null) {
+            wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        }
+        return wait;
     }
 }
